@@ -34,7 +34,7 @@ table medidas_fVendas
 			
 			SUMX(
 			    fVendas,
-			    (fVendas[PrecoUnitario] * fVendas[Quantidade]) *(1 - RELATED(dPromocoes[PercentualDesconto]))
+			    (fVendas[PrecoUnitario] * fVendas[Quantidade])
 			)
 		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
 		displayFolder: 01. Básicas
