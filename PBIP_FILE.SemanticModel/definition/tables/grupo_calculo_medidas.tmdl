@@ -1,0 +1,43 @@
+table grupo_calculo_medidas
+	lineageTag: c4a1b2a5-faf8-4f57-ab01-dc215529b8c2
+
+	calculationGroup
+
+		calculationItem Padrao = SELECTEDMEASURE()
+
+		calculationItem Acumulado =
+				
+				CALCULATE(
+				    SELECTEDMEASURE(),
+				    DATESYTD(dCalendario[Data])
+				)
+
+		calculationItem 'Media movel mensal' =
+				
+				CALCULATE(
+				    SELECTEDMEASURE(),
+				    WINDOW(
+				        -2,REL,
+				        0,REL,
+				        ALLSELECTED(dCalendario[AnoMesNum],dCalendario[AnoMês])
+				    )
+				)
+
+	column 'Coluna do grupo de cálculo'
+		dataType: string
+		lineageTag: e4d3ada5-8272-417f-8664-6e4236b1a1bc
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: abb6f12c-bbf6-40cb-90e2-241edbba328e
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

@@ -1,0 +1,554 @@
+table medidas_fVendas
+	lineageTag: db63eb87-ee5a-4169-8f0e-b6f46434570f
+
+	measure 'Qtd vendida' = SUM(fVendas[Quantidade])
+		formatString: #,0
+		displayFolder: 01. Básicas
+		lineageTag: 0cf110be-ad20-4a2f-90ff-c67ed3d94166
+
+	measure 'Custo total' =
+			
+			SUMX(
+			    fVendas,
+			    fVendas[CustoUnitario] * fVendas[Quantidade]
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 01. Básicas
+		lineageTag: b4be72c4-046b-49e3-8709-7f6fa8ac95a7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Vendas brutas' =
+			
+			SUMX(
+			    fVendas,
+			    fVendas[PrecoUnitario] * fVendas[Quantidade]
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 01. Básicas
+		lineageTag: bf00a560-658b-4e49-84b7-ca37e66b6c0b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Vendas liquidas' =
+			
+			SUMX(
+			    fVendas,
+			    (fVendas[PrecoUnitario] * fVendas[Quantidade]) *(1 - RELATED(dPromocoes[PercentualDesconto]))
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 01. Básicas
+		lineageTag: 389d7593-0ac7-4e22-a7dc-2af99335b561
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure Desconto = [Vendas brutas] - [Vendas liquidas]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 01. Básicas
+		lineageTag: 0b156f58-a42c-4a31-b846-4c55a34a7041
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Desconto' = DIVIDE([Vendas brutas] - [Vendas liquidas],[Vendas brutas], 0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 02. Percentuais
+		lineageTag: 29536b64-8326-4360-accf-afe41f24fc3d
+
+	measure 'Custo total LY' =
+			
+			CALCULATE(
+			    [Custo total],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: #,0.00
+		displayFolder: 03. Last Year
+		lineageTag: 974df08b-6346-440c-aa46-90e236388037
+
+	measure 'Qtd vendida LY' =
+			
+			CALCULATE(
+			    [Qtd vendida],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: #,0
+		displayFolder: 03. Last Year
+		lineageTag: 17756180-5f64-4509-8218-74a0152149bf
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Vendas brutas LY' =
+			
+			CALCULATE(
+			    [Vendas brutas],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: #,0.00
+		displayFolder: 03. Last Year
+		lineageTag: 935cef33-0734-4c4f-81d8-f598adc9863a
+
+	measure 'Vendas liquidas LY' =
+			
+			CALCULATE(
+			    [Vendas liquidas],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 03. Last Year
+		lineageTag: 050be892-f420-4d22-99b0-9a58eef9a923
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Desconto LY' =
+			
+			CALCULATE(
+			    [% Desconto],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: f85d1a72-9ba0-41e8-8986-b85ee5d08b1e
+
+	measure '% Custo total YoY' = DIVIDE([Custo total] - [Custo total LY], [Custo total LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: ce3a4166-b722-4ac0-b0b6-c1d0ddae9713
+
+	measure '% Qtd vendida YoY' = DIVIDE([Qtd vendida] - [Qtd vendida LY], [Qtd vendida LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: 8b92028c-b041-4567-a338-09f8fbac2565
+
+	measure '% Vendas brutas YoY' = DIVIDE([Vendas brutas] - [Vendas brutas LY], [Vendas brutas LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: 2363c205-83b0-4669-ae0c-ff533f224437
+
+	measure '% Vendas liquidas YoY' = DIVIDE([Vendas liquidas] - [Vendas liquidas LY], [Vendas liquidas LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: 7f52322f-9957-47a9-a8aa-0dc215617fb0
+
+	measure Margem = [Vendas liquidas] - [Custo total]
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 01. Básicas
+		lineageTag: ebbc52b7-dc51-400c-919a-bacc0d5be9ad
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Margem' = DIVIDE( [Margem], [Vendas liquidas] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 02. Percentuais
+		lineageTag: 68d42c4c-b60a-4de2-a247-393ff169ba1b
+
+	measure '% Participacao vendas liquidas (categoria-marca-produto)' = ```
+			
+			var _vendasLiquidas = [Vendas liquidas]
+			var _scopoProduto = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALLSELECTED(dProdutos[Produto])
+			)
+			var _scopoMarca = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALLSELECTED(dProdutos[Marca])
+			)
+			var _scopoCategoria = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALLSELECTED(dCategoriaProdutos[Categoria])
+			)
+			var _resultProduto = DIVIDE(_vendasLiquidas,_scopoProduto)
+			var _resultMarca = DIVIDE(_vendasLiquidas,_scopoMarca)
+			var _resultCategoria = DIVIDE(_vendasLiquidas,_scopoCategoria)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISINSCOPE(dProdutos[Produto]),_resultProduto,
+			    ISINSCOPE(dProdutos[Marca]),_resultMarca,
+			    _resultCategoria
+			)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 02. Percentuais
+		lineageTag: d01b3daa-c3ff-4edb-86a0-c1ee5d534021
+
+	measure '% Participacao vendas liquidas ignorando filtros (categoria-marca-produto)' = ```
+			
+			var _vendasLiquidas = [Vendas liquidas]
+			var _scopoProduto = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALL(dProdutos[Produto]),
+			    ALL()
+			)
+			var _scopoMarca = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALL(dProdutos[Marca]),
+			    ALL()
+			)
+			var _scopoCategoria = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALL(dCategoriaProdutos[Categoria]),
+			    ALL()
+			)
+			var _resultProduto = DIVIDE(_vendasLiquidas,_scopoProduto)
+			var _resultMarca = DIVIDE(_vendasLiquidas,_scopoMarca)
+			var _resultCategoria = DIVIDE(_vendasLiquidas,_scopoCategoria)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISINSCOPE(dProdutos[Produto]),_resultProduto,
+			    ISINSCOPE(dProdutos[Marca]),_resultMarca,
+			    _resultCategoria
+			)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 02. Percentuais
+		lineageTag: 3ff7216b-f0d9-4e78-9e9e-7a9dbc0633d9
+
+	measure 'Margem LY' =
+			
+			CALCULATE(
+			    [Margem],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 03. Last Year
+		lineageTag: 65f9d2a7-fd97-4fd3-a9e6-8857019fa730
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Margem YoY' = DIVIDE([Margem] - [Margem LY], [Margem LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 03. Last Year
+		lineageTag: 9d9a96ce-f269-4287-9f33-78ae964bd73d
+
+	measure '% Comp % Margem' = 1 - [% Margem]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Formatações/Demais
+		lineageTag: d1cfe90e-997c-4744-998a-37dce9a6bc2a
+
+	measure '% Comp % Desconto' = 1 - [% Desconto]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Formatações/Demais
+		lineageTag: e64ac547-2596-401d-9a5d-fa47d0e7f6e1
+
+	measure 'FC Rotulo Vendas liquidas' = [Vendas liquidas]
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 919f5371-3d7e-4b66-9af9-1e9a7ff05543
+
+		formatStringDefinition = ```
+				var _vendasLiquidas = SELECTEDMEASURE()
+				var _formataMedida = 
+				    SWITCH(
+				        TRUE(),
+				        _vendasLiquidas >= 1E6, FORMAT(_vendasLiquidas, "#0,,.0 Mi"),
+				        _vendasLiquidas >= 1E3, FORMAT(_vendasLiquidas, "#0,.0 K"),
+				        _vendasLiquidas >= 0, FORMAT(_vendasLiquidas, "#0")
+				    )
+				return
+				"""" &_formataMedida&""""
+				```
+
+	measure 'Texto selecione uma categoria' =
+			
+			SWITCH(
+			    TRUE(),
+			    NOT ISFILTERED(dIconesProdutos[Categoria]),"Selecione uma categoria",
+			    HASONEFILTER(dIconesProdutos[Categoria]),"Detalhar categoria " & SELECTEDVALUE(dIconesProdutos[Categoria]),
+			    "Selecione apenas 1 categoria"
+			)
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 0e800ded-5304-46c1-9838-c975cb11d2d8
+
+	measure 'Pareto Vendas liquidas Marca' = ```
+			
+			VAR _accVendasLiquidas =
+			CALCULATE(
+			    [Vendas liquidas],
+			    WINDOW(
+			        0,ABS,
+			        0, REL,
+			        ALLSELECTED(dProdutos[Marca]),
+			        ORDERBY([Vendas liquidas], DESC)
+			    )
+			)
+			var _vendasLiquidasTotal = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALLSELECTED(dProdutos[Marca])
+			)
+			RETURN
+			IF([Vendas liquidas] > 0 ,DIVIDE(_accVendasLiquidas,_vendasLiquidasTotal))
+			```
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		displayFolder: 04. Pareto
+		lineageTag: 40d185b3-76aa-45f1-8442-d44b69edf1d0
+
+	measure '% Pareto Vendas liquidas Produto' = ```
+			
+			VAR _accVendasLiquidas =
+			CALCULATE(
+			    [Vendas liquidas],
+			    WINDOW(
+			        0,ABS,
+			        0, REL,
+			        ALLSELECTED(dProdutos[Produto]),
+			        ORDERBY([Vendas liquidas], DESC)
+			    )
+			)
+			var _vendasLiquidasTotal = 
+			CALCULATE(
+			    [Vendas liquidas],
+			    ALLSELECTED(dProdutos[Produto])
+			)
+			RETURN
+			IF([Vendas liquidas] > 0 ,DIVIDE(_accVendasLiquidas,_vendasLiquidasTotal))
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 04. Pareto
+		lineageTag: d4dd95f1-f6f2-4ad1-954f-bae74ac36f04
+
+	measure 'FC Pareto Vendas liquidas' =
+			
+			IF(
+			    [% Pareto Vendas liquidas Produto] <= 0.8, "#17282F","#377A8870")
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 2500f19b-b2c5-486a-9eab-ac37d9d13e57
+
+	measure 'FC Pareto Vendas liquidas Marca' =
+			
+			IF(
+			    [Pareto Vendas liquidas Marca] <= 0.8, "purple","cyan")
+		displayFolder: 05. Formatações/Demais
+		lineageTag: c746a69e-3b14-4d14-8826-04fe3224805d
+
+	measure 'Vendas liquidas produtos pareto 80%' = ```
+			
+			CALCULATE(
+			    [Vendas liquidas],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Pareto Vendas liquidas Produto] <= 0.8
+			    )
+			)
+			
+			```
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: 04. Pareto
+		lineageTag: b0e160a6-a542-4d19-9ab1-24c5ba38da0f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'FC Rotulo Magem' = [Margem]
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 4d3feca6-2f54-42c1-b33d-192022e7b709
+
+		formatStringDefinition = ```
+				var _vendasLiquidas = SELECTEDMEASURE()
+				var _formataMedida = 
+				    SWITCH(
+				        TRUE(),
+				        _vendasLiquidas >= 1E6, FORMAT(_vendasLiquidas, "#0,,.0 Mi"),
+				        _vendasLiquidas >= 1E3, FORMAT(_vendasLiquidas, "#0,.0 K"),
+				        _vendasLiquidas >= 0, FORMAT(_vendasLiquidas, "#0")
+				    )
+				return
+				"""" &_formataMedida&""""
+				```
+
+	measure 'Margem produtos pareto 80%' = ```
+			
+			CALCULATE(
+			    [Margem],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Pareto Vendas liquidas Produto] <= 0.8
+			    )
+			)
+			
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 04. Pareto
+		lineageTag: dfee74e1-db54-41f2-85a5-0186584e23fe
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Margem produtos pareto 80%' = ```
+			
+			CALCULATE(
+			    [% Margem],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Pareto Vendas liquidas Produto] <= 0.8
+			    )
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 04. Pareto
+		lineageTag: 93b191dd-320e-4ec6-a1b4-43eef67886cd
+
+	measure 'Custo produtos pareto 80%' = ```
+			
+			CALCULATE(
+			    [Custo total],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Pareto Vendas liquidas Produto] <= 0.8
+			    )
+			)
+			
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: 04. Pareto
+		lineageTag: 4b406cfd-7e01-4cf6-9f1f-6c407fa8d6c6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Qtd vendas' = DISTINCTCOUNT(fVendas[CodigoVenda])
+		formatString: #,0
+		displayFolder: 01. Básicas
+		lineageTag: f1a7e855-50fc-452f-b819-bffd9b5a0dcd
+
+	measure 'Ticket medio' = DIVIDE([Vendas liquidas],[Qtd vendas])
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 01. Básicas
+		lineageTag: 65ee152d-720f-4b95-a251-075fc125e238
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Ticket medio LY' =
+			
+			CALCULATE(
+			    [Ticket medio],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 03. Last Year
+		lineageTag: c3db6d2a-d348-413f-bb02-725585f28e8d
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Ticket medio YoY' = DIVIDE([Ticket medio] - [Ticket medio LY], [Ticket medio LY])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 4e580c2e-1c3a-4749-8bef-c1d841c5cb02
+
+	measure 'Texto range data RFV' =
+			
+			var _rangeData =
+			CALCULATE(
+			    FORMAT(MINX(dCalendario,MIN(dCalendario[Data])),"DD/MM/YYYY") & "-" & FORMAT(MAXX(dCalendario,MAX(dCalendario[Data])),"DD/MM/YYYY"),
+			    DATESINPERIOD(
+			        dCalendario[Data],
+			        MAX(dCalendario[Data]),
+			        -12,
+			        MONTH
+			    )
+			)
+			RETURN
+			"Analisando range de datas -> "& _rangeData
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 4d6d94f7-2279-4dd7-a838-27fcb915c68a
+
+	measure 'Qtd produtos' =
+			
+			DISTINCTCOUNT(fVendas[IdProduto])
+		formatString: 0
+		displayFolder: 01. Básicas
+		lineageTag: e90a355f-4df7-4b11-ad93-48f0907d750a
+
+	measure 'Nome usuarios RLS' = USERNAME()
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 39a8bf6b-2cec-4be6-a1d3-d3e7de4315b9
+
+	measure 'Qtd produtos Vendas liquidas produtos pareto 80%' =
+			
+			CALCULATE(
+			    [Qtd produtos],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Pareto Vendas liquidas Produto] <= 0.8
+			    )
+			)
+		formatString: 0
+		displayFolder: 04. Pareto
+		lineageTag: cf1aea6d-220b-4ec0-97a8-438ba4f43fe8
+
+	measure 'Texto atualiza BI' = SELECTEDVALUE('Atualiza BI'[Data Atualizacao])
+		formatString: General Date
+		displayFolder: 05. Formatações/Demais
+		lineageTag: 4ff6cb61-b02b-4c8e-89e8-9776cbb75a28
+
+	measure 'Rank Vendas liquidas por produtos' =
+			
+			var _rank =
+			RANKX(
+			    ALLSELECTED(dProdutos[Produto]),
+			    [Vendas liquidas]
+			)
+			RETURN
+			IF( ISINSCOPE(dProdutos[Produto])&&[Vendas liquidas],_rank)
+		formatString: 0
+		displayFolder: 01. Básicas
+		lineageTag: 3af9725c-c381-4c8f-996f-164c19a9cf2b
+
+	measure 'Ticket medio melhor mes' =
+			
+			CALCULATE(
+			    SELECTEDVALUE(dCalendario[Nome do Mês]),
+			    WINDOW(
+			        1,ABS,
+			        1,ABS,
+			        ALLSELECTED(dCalendario[Mês Nome]),
+			        ORDERBY(
+			            [Ticket medio],
+			            DESC
+			        )
+			    )
+			)
+		displayFolder: 01. Básicas
+		lineageTag: 1cd63692-7d49-4b38-a3b5-ca5ec91d16cf
+
+	measure 'Qtd vendida melhor mes' =
+			
+			CALCULATE(
+			    SELECTEDVALUE(dCalendario[Nome do Mês]),
+			    WINDOW(
+			        1,ABS,
+			        1,ABS,
+			        ALLSELECTED(dCalendario[Mês Nome]),
+			        ORDERBY(
+			            [Qtd vendida],
+			            DESC
+			        )
+			    )
+			)
+		displayFolder: 01. Básicas
+		lineageTag: e9ad7e33-0ebc-46b9-a707-7198532e411f
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: a2acca0f-330f-45d1-8046-c1cceaac90f6
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition medidas_fVendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

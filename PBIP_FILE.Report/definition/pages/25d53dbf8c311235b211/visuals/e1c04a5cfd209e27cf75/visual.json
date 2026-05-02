@@ -1,0 +1,93 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "e1c04a5cfd209e27cf75",
+  "position": {
+    "x": 42.82181818181818,
+    "y": 161.04727272727274,
+    "z": 1000,
+    "height": 175.94181818181818,
+    "width": 193.62909090909091,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "simpleImageEBC4593F96F1425FB3D84C5BF02B5075",
+    "query": {
+      "queryState": {
+        "imageURL": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dIconesProdutos"
+                    }
+                  },
+                  "Property": "Icone URL"
+                }
+              },
+              "queryRef": "dIconesProdutos.Icone URL",
+              "nativeQueryRef": "Icone URL"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "imageSettings": [
+        {
+          "properties": {
+            "scalingMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'normal'"
+                }
+              }
+            },
+            "imageAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'mcenter'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "altTextSettings": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

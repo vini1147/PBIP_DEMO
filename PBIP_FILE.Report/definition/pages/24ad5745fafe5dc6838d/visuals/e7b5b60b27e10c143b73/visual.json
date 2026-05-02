@@ -1,0 +1,109 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "e7b5b60b27e10c143b73",
+  "position": {
+    "x": 157.22834645669292,
+    "y": 35.275590551181104,
+    "z": 15000,
+    "height": 48.377952755905511,
+    "width": 491.84251968503935,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Olá, ",
+                    "textStyle": {
+                      "fontSize": "14pt"
+                    }
+                  },
+                  {
+                    "value": {
+                      "propertyIdentifier": {
+                        "objectName": "values",
+                        "propertyName": "expr"
+                      },
+                      "selector": {
+                        "id": "Valor"
+                      }
+                    },
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "14pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "expr": {
+              "expr": {
+                "Min": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "Subquery": {
+                          "Query": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "m",
+                                "Entity": "medidas_fVendas",
+                                "Type": 0
+                              }
+                            ],
+                            "Select": [
+                              {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "m"
+                                    }
+                                  },
+                                  "Property": "Nome usuarios RLS"
+                                },
+                                "Name": "medidas_fVendas.Nome usuarios RLS"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "Property": "medidas_fVendas.Nome usuarios RLS"
+                    }
+                  },
+                  "IncludeAllTypes": 1
+                },
+                "Annotations": {
+                  "NaturalLanguage": {
+                    "version": 1,
+                    "kind": "NaturalLanguage",
+                    "annotation": {
+                      "name": "Valor",
+                      "utterance": "nome usuarios RLS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "Valor"
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

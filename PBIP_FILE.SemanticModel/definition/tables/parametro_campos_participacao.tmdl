@@ -1,0 +1,48 @@
+table parametro_campos_participacao
+	lineageTag: 31de6c1f-eda3-40f2-b6a8-5a2badedcb0d
+
+	column parametro_campos_participacao
+		lineageTag: 6e92f553-c6a5-42e2-b1f5-59db8fca1f4b
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'parametro_campos_participacao Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'parametro_campos_participacao Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'parametro_campos_participacao Campos'
+		isHidden
+		lineageTag: e440a8b8-042e-41a4-907d-d8cc1340b748
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'parametro_campos_participacao Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'parametro_campos_participacao Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: 123189f7-29ea-4086-ae0d-1eaa45432949
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition parametro_campos_participacao = calculated
+		mode: import
+		source =
+				{
+				    ("% Part", NAMEOF('medidas_fVendas'[% Participacao vendas liquidas (categoria-marca-produto)]), 0),
+				    ("% Part (ignorando filtros)", NAMEOF('medidas_fVendas'[% Participacao vendas liquidas ignorando filtros (categoria-marca-produto)]), 1)
+				}
+
+	annotation PBI_Id = b545382788aa44009133970ed97bec2c
+

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "481c665b3c1f0bfc55f9",
+  "position": {
+    "x": 42.5615763546798,
+    "y": 102.85714285714286,
+    "z": 3000,
+    "height": 32.807881773399018,
+    "width": 194.18719211822659,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+    "query": {
+      "queryState": {
+        "mainMeasure": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dIconesProdutos"
+                        }
+                      },
+                      "Property": "Categoria"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(dIconesProdutos.Categoria)",
+              "nativeQueryRef": "Categoria"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "dataLabelSettings": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabelSettings": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

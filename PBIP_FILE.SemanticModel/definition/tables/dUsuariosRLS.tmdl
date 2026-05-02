@@ -1,0 +1,38 @@
+table dUsuariosRLS
+	lineageTag: 165b7098-eaa7-4af0-b606-67a4813b38f7
+
+	column Pais
+		lineageTag: b952183d-e78e-4554-bcc1-e82315901f42
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: dLocalidades[Pais]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Username
+		lineageTag: 5a9fcdad-dc44-4909-ba0a-72b24435a723
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Username]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dUsuariosRLS = calculated
+		mode: import
+		source =
+				
+				var _ajustaNomePais = VALUES(dLocalidades[Pais])
+				var _tab =
+				FILTER(
+				    SUMMARIZE(
+				        dLocalidades,
+				        dLocalidades[Pais],
+				        "Username", "usuario_"&SUBSTITUTE(VALUES(dLocalidades[Pais])," ","")&"@vinanda0908.onmicrosoft.com"
+				    ),
+				    NOT ISBLANK(dLocalidades[Pais])
+				)
+				RETURN
+				_tab
+
+	annotation PBI_Id = e50eaeb0f2c54ddc80efacfec2436a4c
+
