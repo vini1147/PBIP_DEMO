@@ -1,0 +1,52 @@
+table aux_rfv_frequencia
+	lineageTag: 7b077df1-3bab-4542-9286-1b967fc33ed4
+
+	column FREQUENCIA
+		dataType: string
+		lineageTag: 25118f4c-abcd-429d-979d-56333e2fe19d
+		summarizeBy: none
+		sourceColumn: FREQUENCIA
+
+		annotation SummarizationSetBy = Automatic
+
+	column MIN
+		dataType: int64
+		formatString: 0
+		lineageTag: d5dafb27-5dcb-4ede-8a4b-9d3e20303dd1
+		summarizeBy: sum
+		sourceColumn: MIN
+
+		annotation SummarizationSetBy = Automatic
+
+	column MAX
+		dataType: int64
+		formatString: 0
+		lineageTag: 9886b857-3ca6-43ed-b2d8-8c7f56b00a95
+		summarizeBy: sum
+		sourceColumn: MAX
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID
+		dataType: int64
+		formatString: 0
+		lineageTag: e87aa20d-0486-4949-8a8e-cf0a89e3aa5b
+		summarizeBy: count
+		sourceColumn: ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition aux_rfv_frequencia = m
+		mode: import
+		queryGroup: auxiliares
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WcjNU0lEyAGITIDZUitUBChkBmaZAbAnERhAhY5AsSJkhSJ0xRBCsBaTQ0BJsAFgQxDcCqbSEALBZsbEA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [FREQUENCIA = _t, MIN = _t, MAX = _t, ID = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"FREQUENCIA", type text}, {"MIN", Int64.Type}, {"MAX", Int64.Type}, {"ID", Int64.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

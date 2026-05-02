@@ -1,0 +1,55 @@
+table aux_rfv_recencia
+	lineageTag: 0afed7fc-9fe8-4e79-a891-55c89b41393d
+
+	column RECENCIA
+		dataType: string
+		lineageTag: 3475a95b-8fee-4ebc-a963-f5d23f3df0ec
+		summarizeBy: none
+		sourceColumn: RECENCIA
+		sortByColumn: ID
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MIN
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c9cf12f-b925-4e6e-aff4-f8f64aa36c6f
+		summarizeBy: sum
+		sourceColumn: MIN
+
+		annotation SummarizationSetBy = Automatic
+
+	column MAX
+		dataType: int64
+		formatString: 0
+		lineageTag: 86e3d774-0331-49ec-9e1d-eadff94903c1
+		summarizeBy: sum
+		sourceColumn: MAX
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 29924082-afeb-498c-a575-8573f4e88f18
+		summarizeBy: count
+		sourceColumn: ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition aux_rfv_recencia = m
+		mode: import
+		queryGroup: auxiliares
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WCjJU0lEyBBGWUADiK8XqAKWMgEwLENcASBhBxIyBTFMgNgdiY4iQCVhWR8kEjMFCIBUGYINAqmNjAQ==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [RECENCIA = _t, MIN = _t, MAX = _t, ID = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"RECENCIA", type text}, {"MIN", Int64.Type}, {"MAX", Int64.Type}, {"ID", Int64.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

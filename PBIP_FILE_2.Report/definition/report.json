@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.2.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY26SU02",
+      "reportVersionAtImport": {
+        "visual": "2.6.0",
+        "report": "3.1.0",
+        "page": "2.3.0"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Custom2807806159307754.json",
+      "reportVersionAtImport": {
+        "visual": "2.7.0",
+        "report": "3.2.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "true"
+              }
+            }
+          },
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+    "simpleImageEBC4593F96F1425FB3D84C5BF02B5075",
+    "enlightenDataStoryDDFB78A6143E42CFAFBC50CCF18D978D"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY26SU02",
+          "path": "BaseThemes/CY26SU02.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Capa5882421157175014.svg",
+          "path": "Capa5882421157175014.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Custom2807806159307754.json",
+          "path": "Custom2807806159307754.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "Detalha_categoria8074993502847225.svg",
+          "path": "Detalha_categoria8074993502847225.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Detalha_RFV_Produtos6120889817147225.svg",
+          "path": "Detalha_RFV_Produtos6120889817147225.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Overview5634138716844834.svg",
+          "path": "Overview5634138716844834.svg",
+          "type": "Image"
+        },
+        {
+          "name": "RFV_Produtos21986781757730112.svg",
+          "path": "RFV_Produtos21986781757730112.svg",
+          "type": "Image"
+        }
+      ]
+    },
+    {
+      "name": "PBI_CV_9272D058_BEA0_476A_B090_A712545F92FA",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "PBI_CV_9272D058_BEA0_476A_B090_A712545F92FA.pbiviz.json",
+          "path": "PBI_CV_9272D058_BEA0_476A_B090_A712545F92FA.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultFilterActionIsDataFilter": true,
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "queryLimitOption": "None",
+    "customMemoryLimit": "1048576",
+    "customTimeoutLimit": "225"
+  },
+  "slowDataSourceSettings": {
+    "isCrossHighlightingDisabled": false,
+    "isSlicerSelectionsButtonEnabled": false,
+    "isFilterSelectionsButtonEnabled": false,
+    "isFieldWellButtonEnabled": false,
+    "isApplyAllButtonEnabled": false
+  }
+}

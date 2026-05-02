@@ -1,0 +1,7 @@
+role Pais
+	modelPermission: read
+
+	tablePermission dUsuariosRLS = [Username] = USERNAME()
+
+	annotation PBI_Id = e0a1b29775c84ed48a01a0371c8680cc
+

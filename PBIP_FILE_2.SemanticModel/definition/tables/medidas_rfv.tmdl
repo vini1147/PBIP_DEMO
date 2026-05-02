@@ -1,0 +1,615 @@
+table medidas_rfv
+	lineageTag: 4e5b500d-c217-4dc1-800b-05e36fc86a8a
+
+	measure 'V produtos nota' =
+			
+			VAR _result =
+			CALCULATE(
+			    SELECTEDVALUE(aux_rfv_valor[ID]),
+			    FILTER(
+			        aux_rfv_valor,
+			        [(V) Vendas liquidas 12M] >= aux_rfv_valor[MIN] &&
+			        [(V) Vendas liquidas 12M] <= aux_rfv_valor[MAX] &&
+			        [(V) Vendas liquidas 12M]
+			    )
+			)
+			RETURN
+			_result
+		formatString: 0
+		displayFolder: 03. Valor
+		lineageTag: ac4c907c-97a0-44bb-8e86-2c74b95287f2
+
+	measure 'R produtos' = ```
+			
+			var _result =
+			    CALCULATE(
+			        SELECTEDVALUE(aux_rfv_recencia[ID]),
+			        FILTER(
+			            aux_rfv_recencia,
+			            DATEDIFF( [(R) Ultima compra], MAX( dCalendario[Data] ), DAY ) + 0  >= aux_rfv_recencia[MIN] &&
+			            DATEDIFF( [(R) Ultima compra], MAX( dCalendario[Data] ), DAY ) + 0 <= aux_rfv_recencia[MAX] 
+			            && [(R) Ultima compra]
+			        )
+			    )
+			RETURN
+			_result
+			```
+		formatString: 0
+		displayFolder: 01. Recencia
+		lineageTag: 6b2a4ea8-8ac9-41b3-8544-b7b760745f2c
+
+	measure 'Qtd produtos 12M' =
+			
+			CALCULATE(
+			    COUNTROWS(VALUES(fVendas[IdProduto])),
+			    DATESINPERIOD(
+			        dCalendario[Data],
+			        MAX(dCalendario[Data]),
+			        -12,
+			        MONTH
+			    )
+			)
+		formatString: 0
+		displayFolder: 01. Recencia
+		lineageTag: 9bd208d6-ee86-4ba2-b0da-01fdd8f69fd0
+
+	measure 'F produtos' =
+			
+			var _result =
+			CALCULATE(
+			    SELECTEDVALUE(aux_rfv_frequencia[ID]),
+			    FILTER(
+			        aux_rfv_frequencia,
+			        [(F) Qtd vendas 12M] >= aux_rfv_frequencia[MIN] &&
+			        [(F) Qtd vendas 12M] <= aux_rfv_frequencia[MAX] &&
+			        [(F) Qtd vendas 12M]
+			    )
+			)
+			RETURN
+			_result
+		formatString: 0
+		displayFolder: 02. Frequencia
+		lineageTag: 9eff7634-eab8-4aa9-a365-7ee711e7eca9
+
+	measure '(V) Vendas liquidas 12M' =
+			
+			CALCULATE(
+			    [Vendas liquidas],
+			    DATESINPERIOD(
+			        dCalendario[Data],
+			        MAX(dCalendario[Data]),
+			        -12,
+			        MONTH
+			    )
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: 03. Valor
+		lineageTag: 505a2199-9610-41f1-8b33-c402701625dc
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '(R) Ultima compra' =
+			
+			CALCULATE(
+			    MAX(fVendas[Data]),
+			    ALL(dCalendario),
+			    dCalendario[Data] <= MAX(dCalendario[Data])
+			)
+		formatString: Short Date
+		displayFolder: 01. Recencia
+		lineageTag: 746a70e3-f487-4d2c-bad5-471285dc08e0
+
+	measure '(F) Qtd vendas 12M' =
+			
+			CALCULATE(
+			    [Qtd vendas],
+			    DATESINPERIOD(
+			        dCalendario[Data],
+			        MAX(dCalendario[Data]),
+			        -12,
+			        MONTH
+			    )
+			)
+		formatString: 0
+		displayFolder: 02. Frequencia
+		lineageTag: 8bd3bcbf-442b-4961-b37f-01463a044ae5
+
+	measure 'Qtd Produtos RFV' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        --Calcula o (R) da recência
+			        DATEDIFF([(R) Ultima compra],MAX(dCalendario[Data]),DAY) >= MIN(aux_rfv_recencia[MIN])
+			        && DATEDIFF([(R) Ultima compra],MAX(dCalendario[Data]),DAY) <= MAX(aux_rfv_recencia[MAX])
+			        &&
+			        --Calcula o (F) de frequencia
+			        [(F) Qtd vendas 12M] >= MIN(aux_rfv_frequencia[MIN])
+			        && [(F) Qtd vendas 12M] <= MAX(aux_rfv_frequencia[MAX])
+			        &&
+			        --Calcula o (V) de valor
+			        [(V) Vendas liquidas 12M] >= MIN(aux_rfv_valor[MIN])
+			        && [(V) Vendas liquidas 12M] <= MAX(aux_rfv_valor[MAX])
+			    )
+			)
+		formatString: 0
+		lineageTag: 3c275979-b936-476d-b948-eb42d6401af4
+
+	measure 'F+V produtos' = ([F produtos] + [V produtos nota]) / 2
+		lineageTag: b50862b1-7631-421f-9188-5ab9647a1520
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '# Campeoes' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 5 &&
+			        // [F] = 5 &&
+			        // [V] = 5
+			        [F+V produtos] = 5
+			    )
+			)
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 08c8afde-4832-4edd-afab-1bc3a6b1f894
+
+	measure '# Precisam de atencao' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 3 &&
+			        [F+V produtos] = 3
+			        // [F produtos] = 3 &&
+			        // [V produtos] = 3
+			    )
+			)
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: dffa9af5-e142-4fe6-9e72-8d063c8067d1
+
+	measure '# Produtos fieis' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] >= 3 &&
+			        // or( [F] = 4, [F] = 5 ) &&
+			        // or( [V] = 4, [V] = 5 )
+			        [F+V produtos] >= 4
+			    )
+			) - [# Campeoes]
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: a4692d5c-4383-4d43-bc59-2846e924a52f
+
+	measure '# Produtos recentes' = ```
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 5 &&
+			        [F+V produtos] < 2 
+			        --&& [F+V produtos] >= 1
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 2fc373ff-226b-4088-9e9b-98ec32326e5c
+
+	measure '# Em risco' = ```
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        OR( [R produtos] = 1,[R produtos] = 2 ) &&
+			        // or( [F] = 4, [F] = 5 ) &&
+			        // or( [V] = 4, [V] = 5 )
+			        [F+V produtos] >= 3 
+			        --&& [F+V produtos] < 5
+			    )
+			) - [# Nao posso perder-los]
+			```
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: a796a038-b3c3-4b35-b863-4ede71f0d0a3
+
+	measure '# Hibernando' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 2 &&
+			        // [F] = 2 &&
+			        // [V] = 2
+			        [F+V produtos] < 3 && [F+V produtos] >= 2
+			    )
+			)
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 46fac077-07be-49bb-a34d-8d9464342909
+
+	measure '# Nao posso perder-los' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 1 &&
+			        // [F] = 5 &&
+			        // [V] = 5
+			        [F+V produtos] >= 5
+			    )
+			)
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: d6b64e6b-7c5a-44a0-b130-3a8713020970
+
+	measure '# Perdidos' = ```
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        OR( [R produtos] = 1, [R produtos] = 2 ) &&
+			        // or( [F] = 1, [F] = 2 ) &&
+			        // or( [V] = 1, [V] = 2 )
+			        [F+V produtos] < 3 
+			        --&& [F+V produtos] >= 1
+			    )
+			) - [# Hibernando]
+			```
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 18b57db0-8195-4be9-a949-d779c780089f
+
+	measure '# Potenciais fieis' =
+			
+			CALCULATE(
+			    [Qtd produtos 12M],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] >= 4 &&
+			        [F+V produtos] >= 2 && [F+V produtos] < 4
+			        // or( [F] = 2, [F] = 3 ) &&
+			        // or( [V] = 2, [V] = 3 )
+			    )
+			)
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 110b1269-a5cf-4f2c-92e1-6fa9822a6008
+
+	measure '# Prestes a hibernar' = ```
+			
+			CALCULATE(
+			    [Qtd produtos],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 3 &&
+			        // OR( [F] = 2, [F] = 1 ) &&
+			        // OR( [V] = 2, [V] = 1 )
+			        [F+V produtos] < 3 
+			        --&& [F+V produtos] >= 1
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 9f4d1949-a451-4fbf-91bd-9a87d6e5ecdd
+
+	measure '# Promissores' = ```
+			
+			CALCULATE(
+			    [Qtd produtos],
+			    FILTER(
+			        dProdutos,
+			        [R produtos] = 4 &&
+			        // [F] = 1 &&
+			        // [V] = 1
+			        [F+V produtos] < 2 
+			        --&& [F+V produtos] >= 1
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 9282f325-613f-4e3e-9d36-2b784458e02e
+
+	measure '# Conteudos por segmentacao' =
+			
+			VAR varClasseRFV = SELECTEDVALUE ( aux_classe_produtos[Segmentação] )
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        varClasseRFV  = "Campeões", [# Campeoes],
+			        varClasseRFV  = "Produtos fiéis", [# Produtos fieis],
+			        varClasseRFV  = "Potenciais fiéis", [# Potenciais fieis],
+			        varClasseRFV  = "Produtos recentes", [# Produtos recentes],
+			        varClasseRFV  = "Hibernando", [# Hibernando],
+			        varClasseRFV  = "Promissores", [# Promissores],
+			        varClasseRFV  = "Precisam de atenção", [# Precisam de atencao],
+			        varClasseRFV  = "Prestes a hibernar", [# Prestes a hibernar],
+			        varClasseRFV  = "Não posso perder-los", [# Nao posso perder-los],
+			        varClasseRFV  = "Em risco", [# Em risco],
+			        varClasseRFV  = "Perdidos", [# Perdidos],
+			        BLANK()
+			    ) + 0
+		formatString: 0
+		displayFolder: 04. Qtd por segemento
+		lineageTag: 6246b339-c721-4efa-a241-6a6b904cd518
+
+	measure '% Campeoes' = DIVIDE([# Campeoes],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 962c34ef-e5b3-40a6-ab5b-9abf594fbd5b
+
+	measure '% Produtos fieis' = DIVIDE([# Produtos fieis],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 108cb739-45eb-4a23-b238-2d9bda8a9224
+
+	measure '% Potenciais fieis' = DIVIDE([# Potenciais fieis],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 5073d647-df3a-4aba-806c-46fd0f5cc9c3
+
+	measure '% Produtos recentes' = DIVIDE([# Produtos recentes],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 02798e90-b728-4e93-901d-f4896cdc44aa
+
+	measure '% Promissores' = DIVIDE([# Promissores],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: e1a0105c-63da-47e5-b1ca-57d6b6e1ef04
+
+	measure '% Precisam de atencao' = DIVIDE([# Precisam de atencao],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 50e053fc-f1d8-41ea-a2ac-5c4613de684b
+
+	measure '% Prestes a hibernar' = DIVIDE([# Prestes a hibernar],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 32153aab-408f-4233-84a7-959c7c8e8cd3
+
+	measure '% Hibernando' = DIVIDE([# Hibernando],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: ca131fa1-90d0-4fde-a7c0-5ab21c9e0ef3
+
+	measure '% Em risco' = DIVIDE([# Em risco],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 299e555a-08a5-4204-9e31-28c96cb4dae7
+
+	measure '% Nao posso perde-los' = DIVIDE([# Nao posso perder-los],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 15c63903-3f37-419c-ac2e-7848114bf127
+
+	measure '% Perdidos' = DIVIDE([# Perdidos],[Qtd produtos 12M],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 05. Percentual por segmento
+		lineageTag: 69cbecd4-0af8-4c1e-8568-4dc8655bfd60
+
+	measure '$ Vendas liquidas Campeoes' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Campeoes]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 354dd563-9b0e-44a7-a6b3-fb4c9b056c1b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Produtos fieis' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Produtos fieis]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: bf2dac9f-5dcf-4152-8c35-a25d1a02c0ba
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Potenciais fieis' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Potenciais fieis]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 476eed2f-e229-4319-9f67-a8f0344d819c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Produtos recentes' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Produtos recentes]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: a9532d07-33c6-4ccb-818f-c08836122584
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Promissores' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Promissores]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: b4349982-2556-494f-9893-d507b891546a
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Precisam de atencao' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Precisam de atencao]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 6a069a80-93f9-4013-89b9-8004ad7623a1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Prestes a hibernar' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Prestes a hibernar]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: f5aa49ea-99f5-42ff-ba3d-bc895008d4b8
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Em risco' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Em risco]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 00879356-3235-4d01-9be1-f590f5112b1e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Nao posso perde-los' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Nao posso perder-los]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 35de38ce-0d7b-4859-88ea-668667a8e1d0
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Hibernando' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Hibernando]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 03cd48e8-a236-4838-b400-db5dd2e5dd94
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas Perdidos' =
+			
+			CALCULATE(
+			    [(V) Vendas liquidas 12M],
+			    FILTER(
+			        dProdutos,
+			        [# Perdidos]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 429c5b94-1dfb-41b7-bc79-03f1da6998f5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Vendas liquidas por segmentacao' = ```
+			
+			VAR varClasseRFV = SELECTEDVALUE ( aux_classe_produtos[Segmentação] )
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        varClasseRFV  = "Campeões", [$ Vendas liquidas Campeoes],
+			        varClasseRFV  = "Produtos fiéis", [$ Vendas liquidas Produtos fieis],
+			        varClasseRFV  = "Potenciais fiéis", [$ Vendas liquidas Potenciais fieis],
+			        varClasseRFV  = "Produtos recentes", [$ Vendas liquidas Produtos recentes],
+			        varClasseRFV  = "Hibernando", [$ Vendas liquidas Hibernando],
+			        varClasseRFV  = "Promissores", [$ Vendas liquidas Promissores],
+			        varClasseRFV  = "Precisam de atenção", [$ Vendas liquidas Precisam de atencao],
+			        varClasseRFV  = "Prestes a hibernar", [$ Vendas liquidas Prestes a hibernar],
+			        varClasseRFV  = "Não posso perder-los", [$ Vendas liquidas Nao posso perde-los],
+			        varClasseRFV  = "Em risco", [$ Vendas liquidas Em risco],
+			        varClasseRFV  = "Perdidos", [$ Vendas liquidas Perdidos],
+			        BLANK()
+			    )
+			
+			```
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		lineageTag: 50c57556-34db-4420-b540-9469342c41c1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Texto selecione uma Segmentação' =
+			
+			SWITCH(
+			    TRUE(),
+			    NOT ISFILTERED(aux_classe_produtos[Segmentação]),"Selecione uma Segmentação",
+			    HASONEFILTER(aux_classe_produtos[Segmentação]),"Detalhar Segmentação " & SELECTEDVALUE(aux_classe_produtos[Segmentação]),
+			    "Selecione apenas 1 Segmentação"
+			)
+		lineageTag: 4d3c4d61-a07d-4f31-840e-831780378998
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: d644a788-4edb-4d3b-a031-1beeb715c89e
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition medidas_rfv = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

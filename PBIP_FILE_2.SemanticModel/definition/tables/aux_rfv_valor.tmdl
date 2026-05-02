@@ -1,0 +1,55 @@
+table aux_rfv_valor
+	lineageTag: c8ff0dd7-86c1-4298-9b7a-3c167ffadcd7
+
+	column VALOR
+		dataType: string
+		lineageTag: 3e98eb20-af6c-40ee-8252-d365f1af8bad
+		summarizeBy: none
+		sourceColumn: VALOR
+		sortByColumn: ID
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MIN
+		dataType: int64
+		formatString: 0
+		lineageTag: 2deba94c-229f-45f3-a4d9-c17cce056320
+		summarizeBy: sum
+		sourceColumn: MIN
+
+		annotation SummarizationSetBy = Automatic
+
+	column MAX
+		dataType: int64
+		formatString: 0
+		lineageTag: 4ac9d8a5-7dff-4423-85e0-81ec767ae653
+		summarizeBy: sum
+		sourceColumn: MAX
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID
+		dataType: int64
+		formatString: 0
+		lineageTag: db568010-5102-4ec9-aaa8-43b752c9fc34
+		summarizeBy: count
+		sourceColumn: ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition aux_rfv_valor = m
+		mode: import
+		queryGroup: auxiliares
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("PczBCQAxCATAXvadh0mUXBq5T7D/Nm6DeoK4OOI5eDsahL02i7PDG9eD8REW504aQfNeSZoWzkBltMJVqIFWT/+v6Qb3Dw==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [VALOR = _t, MIN = _t, MAX = _t, ID = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"VALOR", type text}, {"MIN", Int64.Type}, {"MAX", Int64.Type}, {"ID", Int64.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
