@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "e0649f2cff0b5cf98056",
   "position": {
     "x": 39.934318555008211,
@@ -77,58 +77,9 @@
               },
               "queryRef": "medidas_fVendas.Vendas liquidas",
               "nativeQueryRef": "Vendas liquidas"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "medidas_fVendas"
-                    }
-                  },
-                  "Property": "% Participacao vendas liquidas (categoria-marca-produto)"
-                }
-              },
-              "queryRef": "medidas_fVendas.% Participacao vendas liquidas (categoria-marca-produto)",
-              "nativeQueryRef": "% Part",
-              "displayName": "% Part"
-            }
-          ],
-          "fieldParameters": [
-            {
-              "parameterExpr": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "parametro_campos_participacao"
-                    }
-                  },
-                  "Property": "parametro_campos_participacao"
-                }
-              },
-              "index": 1,
-              "length": 1,
-              "sortDirection": "Descending"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "medidas_fVendas"
-                  }
-                },
-                "Property": "% Participacao vendas liquidas (categoria-marca-produto)"
-              }
-            },
-            "direction": "Descending"
-          }
-        ]
       }
     },
     "expansionStates": [

@@ -118,17 +118,6 @@
           "type": "CustomVisualMetadata"
         }
       ]
-    },
-    {
-      "name": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
-      "type": "CustomVisual",
-      "items": [
-        {
-          "name": "advanceCardE03760C5AB684758B56AA29F9E6C257B.pbiviz.json",
-          "path": "advanceCardE03760C5AB684758B56AA29F9E6C257B.pbiviz.json",
-          "type": "CustomVisualMetadata"
-        }
-      ]
     }
   ],
   "settings": {

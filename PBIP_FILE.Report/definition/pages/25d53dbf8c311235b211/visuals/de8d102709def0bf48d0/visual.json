@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "de8d102709def0bf48d0",
   "position": {
     "x": 265.44649446494464,
@@ -10,7 +10,7 @@
     "tabOrder": 1000
   },
   "visual": {
-    "visualType": "lineClusteredColumnComboChart",
+    "visualType": "lineChart",
     "query": {
       "queryState": {
         "Category": {
@@ -61,9 +61,8 @@
                   "Property": "FC Rotulo Vendas liquidas"
                 }
               },
-              "queryRef": "medidas_fVendas.Rotulo Vendas liquidas",
-              "nativeQueryRef": "Atual",
-              "displayName": "Atual"
+              "queryRef": "medidas_fVendas.FC Rotulo Vendas liquidas",
+              "nativeQueryRef": "Atual"
             }
           ]
         }
@@ -77,13 +76,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            },
-            "innerPadding": {
-              "expr": {
-                "Literal": {
-                  "Value": "16L"
                 }
               }
             },
@@ -115,20 +107,6 @@
               }
             },
             "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "secShow": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "alignZeros": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -403,21 +381,8 @@
                   "Value": "'shortDash'"
                 }
               }
-            }
-          }
-        }
-      ],
-      "layout": [
-        {
-          "properties": {
-            "clusteredGapSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "30D"
-                }
-              }
             },
-            "clusteredGapOverlaps": {
+            "areaShow": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -427,17 +392,14 @@
           }
         }
       ],
+      "layout": [
+        {
+          "properties": {}
+        }
+      ],
       "dataPoint": [
         {
-          "properties": {
-            "fillTransparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "70D"
-                }
-              }
-            }
-          },
+          "properties": {},
           "selector": {
             "metadata": "medidas_fVendas.Vendas liquidas LY"
           }
